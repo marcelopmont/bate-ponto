@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Bate Ponto</string>
+    
+    <string name="home_balance">Seu saldo de horas:</string>
+    <string name="home_button">Bater ponto</string>
+
+    <string name="home_start_time">Hora de início:</string>
+    <string name="home_end_time">Hora de fim (estimada):</string>
+    <string name="home_empty_hour">--:--</string>
+    
 </resources>
