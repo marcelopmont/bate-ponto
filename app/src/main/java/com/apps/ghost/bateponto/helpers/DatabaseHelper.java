@@ -37,14 +37,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PATIENTS_TABLE = "CREATE TABLE " + TABLE_CLOCKIN + "("
                 + KEY_CLOCKIN_ID + " INTEGER PRIMARY KEY," + KEY_CLOCKIN_START + " INTEGER,"
-                + KEY_CLOCKIN_DURATION + " REAL)";
+                + KEY_CLOCKIN_DURATION + " INTEGER)";
         db.execSQL(CREATE_PATIENTS_TABLE);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLOCKIN);
 
         onCreate(db);
+    }
+
+    public void resetDatabase() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CLOCKIN, null, null);
     }
 
     /*
@@ -75,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 clockIn.setId(cursor.getInt(0));
                 long dateInMillis = cursor.getLong(1);
                 clockIn.setStartTime(new Date(dateInMillis));
-                clockIn.setDuration(cursor.getDouble(2));
+                clockIn.setDuration(cursor.getLong(2));
 
                 clockInList.add(clockIn);
             } while (cursor.moveToNext());

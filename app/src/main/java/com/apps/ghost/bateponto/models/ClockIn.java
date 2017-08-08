@@ -10,11 +10,11 @@ public class ClockIn {
 
     private int id;
     private Date startTime;
-    private double duration;
+    private long duration;
 
     public ClockIn() {}
 
-    public ClockIn (Date startTime, Double duration) {
+    public ClockIn (Date startTime, long duration) {
         this.startTime = startTime;
         this.duration = duration;
     }
@@ -35,11 +35,11 @@ public class ClockIn {
         this.startTime = startTime;
     }
 
-    public double getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 }

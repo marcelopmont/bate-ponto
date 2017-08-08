@@ -7,5 +7,14 @@
     <string name="home_start_time">Hora de início:</string>
     <string name="home_end_time">Hora de fim (estimada):</string>
     <string name="home_empty_hour">--:--</string>
+
+    <string name="home_menu_initial_balance">Definir saldo do banco</string>
+    <string name="dialog_balance_title">Banco de horas atual</string>
+    <string name="dialog_balance_message">Insira seu saldo de horas atual</string>
+    <string name="dialog_hour_hint">hh</string>
+    <string name="dialog_minute_hint">mm</string>
+    <string name="dialog_negative">Negativo</string>
+    <string name="dialog_confirm">Confirmar</string>
+    <string name="dialog_cancel">Cancelar</string>
     
 </resources>
