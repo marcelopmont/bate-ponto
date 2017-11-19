@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.apps.ghost.bateponto.helpers.DatabaseHelper;
 import com.apps.ghost.bateponto.models.ClockIn;
+import com.apps.ghost.bateponto.models.SummerFriday;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -34,10 +35,27 @@ public class MainActivity extends AppCompatActivity {
     private final String INITIAL_BALANCE = "initial_balance";
 
     private final int WORKING_HOURS_HOURS = 9;
+    private final int WORKING_HOURS_SUMMER_FRIDAY = 7;
     private final int WORKING_HOURS_MINUTES = 20;
 
     private final int HOUR_IN_MILLIS = 3600000;
     private final int MINUTE_IN_MILLIS = 60000;
+
+    private final SummerFriday[] SUMMER_FRIDAYS = {
+            new SummerFriday(17, 10, 2017),
+            new SummerFriday(24, 10, 2017),
+            new SummerFriday(1, 11, 2017),
+            new SummerFriday(8, 11, 2017),
+            new SummerFriday(15, 11, 2017),
+            new SummerFriday(22, 11, 2017),
+            new SummerFriday(5, 0, 2018),
+            new SummerFriday(12, 0, 2018),
+            new SummerFriday(19, 0, 2018),
+            new SummerFriday(26, 0, 2018),
+            new SummerFriday(2, 1, 2018),
+            new SummerFriday(9, 1, 2018),
+            new SummerFriday(16, 1, 2018)
+    };
 
     @BindView(R.id.home_balance)
     TextView balance;
@@ -131,11 +149,18 @@ public class MainActivity extends AppCompatActivity {
 
         List<ClockIn> clockInList = databaseHelper.getClockInList();
 
-        long estimatedHoursInMillis = WORKING_HOURS_HOURS * HOUR_IN_MILLIS
-                + WORKING_HOURS_MINUTES * MINUTE_IN_MILLIS;
+        long estimatedHoursInMillis;
 
         long balanceDiff = 0;
         for (ClockIn clockIn : clockInList) {
+            if (isSummerFriday(clockIn.getStartTime())) {
+                estimatedHoursInMillis = WORKING_HOURS_SUMMER_FRIDAY * HOUR_IN_MILLIS
+                        + WORKING_HOURS_MINUTES * MINUTE_IN_MILLIS;
+            } else {
+                estimatedHoursInMillis = WORKING_HOURS_HOURS * HOUR_IN_MILLIS
+                        + WORKING_HOURS_MINUTES * MINUTE_IN_MILLIS;
+            }
+
             balanceDiff += clockIn.getDuration() - estimatedHoursInMillis;
         }
 
@@ -160,7 +185,12 @@ public class MainActivity extends AppCompatActivity {
 
         this.startTime.setText(formattedHour + ":" + formattedMinute);
 
-        calendar.add(Calendar.HOUR_OF_DAY, WORKING_HOURS_HOURS);
+        if (isSummerFriday(new Date())) {
+            calendar.add(Calendar.HOUR_OF_DAY, WORKING_HOURS_SUMMER_FRIDAY);
+        } else {
+            calendar.add(Calendar.HOUR_OF_DAY, WORKING_HOURS_HOURS);
+        }
+
         calendar.add(Calendar.MINUTE, WORKING_HOURS_MINUTES);
 
         int endHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -188,9 +218,27 @@ public class MainActivity extends AppCompatActivity {
             this.balance.setText("-" + formattedHour + ":" + formattedMinute);
             this.balance.setBackgroundColor(ContextCompat.getColor(this, R.color.colorRed));
         } else {
-            this.balance.setText("-" + formattedHour + ":" + formattedMinute);
+            this.balance.setText(formattedHour + ":" + formattedMinute);
             this.balance.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
         }
+    }
+
+    private boolean isSummerFriday(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        for (SummerFriday summerFriday: SUMMER_FRIDAYS) {
+            if (year == summerFriday.getYear()
+                    && month == summerFriday.getMonth()
+                    && dayOfMonth == summerFriday.getDay()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void showBalanceDialog() {
