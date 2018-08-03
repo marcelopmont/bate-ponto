@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
             new SummerFriday(16, 1, 2018)
     };
 
+    private final int EXTRA_MINUTE_FOR_WORLD_CUP = 5;
+
+    private final Date startWorldCupCompesation = new Date(1534129200000L);     /* 13/08/2018 */
+    private final Date finalWorldCupCompesation = new Date(1545184800000L);      /* 19/12/2018 */
+
     @BindView(R.id.home_balance)
     TextView balance;
     @BindView(R.id.home_clock_in)
@@ -161,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
                         + WORKING_HOURS_MINUTES * MINUTE_IN_MILLIS;
             }
 
+            if (isWorldCupCompesation(clockIn.getStartTime())) {
+                estimatedHoursInMillis += EXTRA_MINUTE_FOR_WORLD_CUP * MINUTE_IN_MILLIS;
+            }
+
             balanceDiff += clockIn.getDuration() - estimatedHoursInMillis;
         }
 
@@ -189,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
             calendar.add(Calendar.HOUR_OF_DAY, WORKING_HOURS_SUMMER_FRIDAY);
         } else {
             calendar.add(Calendar.HOUR_OF_DAY, WORKING_HOURS_HOURS);
+        }
+
+        if (isWorldCupCompesation(new Date())) {
+            calendar.add(Calendar.MINUTE, EXTRA_MINUTE_FOR_WORLD_CUP);
         }
 
         calendar.add(Calendar.MINUTE, WORKING_HOURS_MINUTES);
@@ -221,6 +234,10 @@ public class MainActivity extends AppCompatActivity {
             this.balance.setText(formattedHour + ":" + formattedMinute);
             this.balance.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
         }
+    }
+
+    private boolean isWorldCupCompesation(Date date) {
+        return date.getTime() > startWorldCupCompesation.getTime() && date.getTime() < finalWorldCupCompesation.getTime();
     }
 
     private boolean isSummerFriday(Date date) {
